@@ -27,13 +27,26 @@ The project is intentionally built with clean, modular Python so it can grow fro
 
 ## ✨ Features
 
-1.💬 Interactive CLI Chatbot :- Ask questions directly in your terminal and get real-time responses 
-2.🤖 Gemini API Integration  :- Uses Google's `google-genai` SDK to communicate with Gemini models 
-3.🔐 Secure API Key Management :- API keys are stored in a `.env` file, never hardcoded or committed 
-4.🧑‍🏫 System Prompt Customization :- A tutor-style system instruction guides the AI's tone and teaching approach 
-5.🛡️ Robust Error Handling :- Graceful `try/except` handling for API and runtime errors 
-6.🧩 Modular Code Structure :- Organized into clear, reusable components for easy extension 
+## ✨ Features
 
+1. 💬 **Interactive CLI Chatbot**  
+   Ask questions directly in your terminal and receive real-time AI responses.
+
+2. 🤖 **Gemini API Integration**  
+   Uses Google's `google-genai` SDK to communicate with Gemini models.
+
+3. 🔐 **Secure API Key Management**  
+   API keys are stored securely in a `.env` file and are never hardcoded or committed to the repository.
+
+4. 🧑‍🏫 **System Prompt Customization**  
+   Includes a tutor-style system prompt that guides the AI's tone and teaching approach.
+
+5. 🛡️ **Robust Error Handling**  
+   Implements `try/except` blocks to gracefully handle API and runtime errors.
+
+6. 🧩 **Modular Code Structure**  
+   Organized into reusable components, making the project easy to maintain and extend.
+   
 ---
 Example interaction:
 
