@@ -27,12 +27,12 @@ The project is intentionally built with clean, modular Python so it can grow fro
 
 ## ✨ Features
 
-➡️💬 Interactive CLI Chatbot :- Ask questions directly in your terminal and get real-time responses 
-➡️🤖 Gemini API Integration  :- Uses Google's `google-genai` SDK to communicate with Gemini models 
-➡️🔐 Secure API Key Management :- API keys are stored in a `.env` file, never hardcoded or committed 
-➡️🧑‍🏫 System Prompt Customization :- A tutor-style system instruction guides the AI's tone and teaching approach 
-➡️🛡️ Robust Error Handling :- Graceful `try/except` handling for API and runtime errors 
-➡️🧩 Modular Code Structure :- Organized into clear, reusable components for easy extension 
+1.💬 Interactive CLI Chatbot :- Ask questions directly in your terminal and get real-time responses 
+2.🤖 Gemini API Integration  :- Uses Google's `google-genai` SDK to communicate with Gemini models 
+3.🔐 Secure API Key Management :- API keys are stored in a `.env` file, never hardcoded or committed 
+4.🧑‍🏫 System Prompt Customization :- A tutor-style system instruction guides the AI's tone and teaching approach 
+5.🛡️ Robust Error Handling :- Graceful `try/except` handling for API and runtime errors 
+6.🧩 Modular Code Structure :- Organized into clear, reusable components for easy extension 
 
 ---
 Example interaction:
@@ -180,7 +180,7 @@ Planned enhancements to expand this project's capabilities:
 - 🎭 **Multiple Tutor Modes** — e.g., beginner, exam-prep, socratic-style tutoring
 - 🌐 **Streamlit Web Interface** — A browser-based UI for non-technical users
 - 🔌 **FastAPI Backend** — Expose the tutor as a REST API for other apps to consume
-- 📝 **Markdown Response Rendering** — Render formatted code blocks, lists, and tables in output
+-📝 **Markdown Response Rendering** — Render formatted code blocks, lists, and tables in output
 
 ---
 
@@ -208,5 +208,13 @@ Contributions, issues, and feature requests are welcome!
 5. Open a Pull Request
 
 Please make sure to update tests and documentation as appropriate.
+
+---
+
+👤Author
+
+Muhammad Hamza Khan
+
+---
 
 <p align="center"> Made with ❤️ and Python </p>
