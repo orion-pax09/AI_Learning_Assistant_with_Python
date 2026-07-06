@@ -1,4 +1,4 @@
-<img width="1449" height="440" alt="image" src="https://github.com/user-attachments/assets/e05871ef-f17a-4aca-8b0e-81b5d49f1d1a" /># 🎓 AI Learning Assistant with Python
+# 🎓 AI Learning Assistant with Python
 
 A command-line AI tutor powered by Google's Gemini API — ask questions, get patient, step-by-step explanations, and learn at your own pace right from your terminal.
 
@@ -41,7 +41,7 @@ The project is intentionally built with clean, modular Python so it can grow fro
 
 ```
 [Screenshot Placeholder]
-<img width="1449" height="440" alt="image" src="https://github.com/user-attachments/assets/89b954f1-034b-4041-92da-7acae7623471" />
+<img width="1449" height="440" alt="image" src="https://github.com/user-attachments/assets/e05871ef-f17a-4aca-8b0e-81b5d49f1d1a" />
 
 ```
 
@@ -219,4 +219,4 @@ Contributions, issues, and feature requests are welcome!
 
 Please make sure to update tests and documentation as appropriate.
 
-<p align="center">Made with ❤️ and Python</p>
+<p align="center"> Made with ❤️ and Python </p>
