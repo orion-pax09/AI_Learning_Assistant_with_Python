@@ -5,7 +5,6 @@ A command-line AI tutor powered by Google's Gemini API — ask questions, get pa
 <p>
   <img src="https://img.shields.io/badge/Python-3.9%2B-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
   <img src="https://img.shields.io/badge/Gemini%20API-Google-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Gemini API">
-  <img src="https://img.shields.io/badge/License-MIT-green?style=for-the-badge" alt="License">
   <img src="https://img.shields.io/badge/Status-Active%20Development-orange?style=for-the-badge" alt="Status">
   <img src="https://img.shields.io/badge/PRs-Welcome-brightgreen?style=for-the-badge" alt="PRs Welcome">
 </p>
