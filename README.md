@@ -27,8 +27,6 @@ The project is intentionally built with clean, modular Python so it can grow fro
 
 ## ✨ Features
 
-## ✨ Features
-
 1. 💬 **Interactive CLI Chatbot**  
    Ask questions directly in your terminal and receive real-time AI responses.
 
