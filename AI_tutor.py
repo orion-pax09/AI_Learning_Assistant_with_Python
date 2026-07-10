@@ -31,15 +31,33 @@ def ask_AI_Tutor(prompt:str) -> str:
 
 
 def main():
-    print("Type 'exit' to quit.")
-    topic = input("Ask gemini: ")
-    while topic.lower() !="exit":
-        print(ask_AI_Tutor(topic))
-        topic = input("Ask gemini: ")
-    print("GoodBye")
-        
+    history = []
+    print("="*50)
+    print("AI tutor")
+    print("="*50)
+    while True:
+        try:
+            prompt = input("Ask AI tutor: ")
+
+            if prompt.lower().strip() in ["bye","goodbye","exit","quit","q","stop","end","close","leave","terminate","finish","done",
+                          "see you","see ya","farewell","exit()","quit()"]:
+                 print("Goodbye")
+                 break
+            else:
+                history.append(f"Users: {prompt}")
+                conversation_context = "\n".join(history)
+                AI_response = ask_AI_Tutor(conversation_context)
+                print("\n")
+                print(f"AI tutor: {AI_response}")
+                history.append(f"AI tutor: {AI_response}")
+                
+            
+        except Exception as e:
+            print("AI tutor is unavailable temporary")
+            print(e)
+
+
+
+
 if __name__ == "__main__":
     main()
-
-
-
