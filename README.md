@@ -46,7 +46,9 @@ The project is intentionally built with clean, modular Python so it can grow fro
 
 6. 🧩 **Modular Code Structure**  
    Organized into reusable components, making the project easy to maintain and extend.
-   
+
+7. 🧵 **Conversation Memory**
+   Maintain conversation context across multiple turns.   
 ---
 Example interaction:
 
@@ -187,7 +189,6 @@ print(response.text)
 
 Planned enhancements to expand this project's capabilities:
 
-- 🧵 **Conversation Memory** — Maintain context across multiple turns
 - ⚡ **Streaming Responses** — Display AI output token-by-token in real time
 - 💾 **Save Chat History** — Persist conversations to a local file or database
 - 🎭 **Multiple Tutor Modes** — e.g., beginner, exam-prep, socratic-style tutoring
