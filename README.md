@@ -46,7 +46,11 @@ The project is intentionally built with clean, modular Python so it can grow fro
    Organized into reusable components, making the project easy to maintain and extend.
 
 7. 🧵 **Conversation Memory**
-   Maintain conversation context across multiple turns.   
+   Maintain conversation context across multiple turns.
+   
+8. ⚡**Treaming responses**
+   Display AI responses in real life using streaming.
+   
 ---
 Example interaction:
 
@@ -187,7 +191,6 @@ print(response.text)
 
 Planned enhancements to expand this project's capabilities:
 
-- ⚡ **Streaming Responses** — Display AI output token-by-token in real time
 - 💾 **Save Chat History** — Persist conversations to a local file or database
 - 🎭 **Multiple Tutor Modes** — e.g., beginner, exam-prep, socratic-style tutoring
 - 🌐 **Streamlit Web Interface** — A browser-based UI for non-technical users
