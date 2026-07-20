@@ -9,6 +9,65 @@ import random
 from tavily import TavilyClient
 load_dotenv()
 
+class AI_Agent_Roadmap:
+    def __init__(self , goal):
+        self.goal = goal
+    
+    #step 01: Reasoning
+    def reason(self):
+        print("AI tutor understanding the goal....")
+        prompt = f"""
+        Goal: {self.goal}
+        Identifying all skill required
+        Return only to the skill"""
+
+        response = client.models.generate_content(
+            model= "gemini-2.5-flash",
+            contents=prompt
+        )
+        return response.text
+    
+    #step 02: Planning
+    def planning(self,skill):
+        print("AI planning the goal.....")
+        prompt = f"""Goal: {self.goal}
+        skill: {skill}
+        Arrange these skill in best learning order"""
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
+        return response.text
+    
+    #step 03: Executing
+
+    def executing(self,plan):
+        print("AI executing the goal.....")
+        prompt = f"""Goal: {self.goal}
+        Learning the plan: {plan}
+        Create the 90-days roadmap"""
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=prompt
+        )
+        return response.text
+    
+    #step 04: Run AI agent
+    def run(self):
+        skill = self.reason()
+        time.sleep(1)
+
+        plan = self.planning(skill=skill)
+        time.sleep(1)
+
+        execute = self.executing(plan=plan)
+        print("\n" + "="*50 , end="")
+        print("Final roadmap")
+        print("\n" + "="*50 , end="")
+        print(execute)
+
+
+
 system_instruction = "You are an expert and patient AI tutor. If the user asks for factual information, definitions, lists, or recommendations, answer directly and clearly." \
 "If the user asks for homework, coding problems, math problems, or wants to learn a concept, guide them step-by-step instead of immediately giving the full solution." \
 "Be concise unless the user asks for more detail."
@@ -196,14 +255,25 @@ def main():
                  print("Goodbye")
                  break
             else:
+                if prompt.lower().startswith("roadmap"):
+                    goal = prompt[8:].strip()
+                    agent = AI_Agent_Roadmap(goal=goal)
+                    agent.run()
+                    
+                    # after running roadmap agent, skip normal query handling
+                    
+                    continue
+                
                 history.append(f"Users: {prompt}")
                 conversation_context = "\n".join(history)
                 start_time = time.time()
                 AI_response = get_query(prompt , conversation_context)
                 print(f"AI tutor: {AI_response}")
                 history.append(f"AI tutor: {AI_response}")
+                
                 if len(history)>Max_history:
                     history = history[-Max_history:]
+                
                 end_time = time.time() 
                 total_time=round(end_time - start_time, 2)
                 print(f"\nResponse time taken: {total_time} seconds")
