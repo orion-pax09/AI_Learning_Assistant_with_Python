@@ -1,235 +1,144 @@
-# 🎓 AI Learning Assistant with Python
+# Python AI Learning Assistant
 
-A command-line AI tutor powered by Google's Gemini API — ask questions, get patient, step-by-step explanations, and learn at your own pace right from your terminal.
+![Python](https://img.shields.io/badge/Python-3.9%2B-blue?logo=python&logoColor=white)
+![Gemini API](https://img.shields.io/badge/Gemini-API-orange?logo=google&logoColor=white)
+![Tavily](https://img.shields.io/badge/Tavily-Web%20Search-green)
+![OpenWeather](https://img.shields.io/badge/OpenWeather-API-yellow)
+![Status](https://img.shields.io/badge/Status-In%20Development-brightgreen)
 
-<p>
-  <img src="https://img.shields.io/badge/Python-3.9%2B-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python">
-  <img src="https://img.shields.io/badge/Gemini%20API-Google-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Gemini API">
-  <img src="https://img.shields.io/badge/Status-Active%20Development-orange?style=for-the-badge" alt="Status">
-  <img src="https://img.shields.io/badge/PRs-Welcome-brightgreen?style=for-the-badge" alt="PRs Welcome">
-</p>
+A command-line AI tutor built with Google's Gemini API. It started out as a simple chatbot that answers questions, but it's slowly turning into something smarter — an assistant that can pick the right tool for the job, not just chat.
 
----
+![Architecture](assets/architecture.svg)
 
-## 📖 Overview
+## What this project actually does
 
-**AI Learning Assistant** is a lightweight, extensible command-line application that turns Google's Gemini API into a personal tutor. Instead of just returning raw model output, the assistant is guided by a custom **system instruction** that shapes its behavior — encouraging it to break down complex topics step by step, while still answering direct factual questions concisely and accurately.
+At its core, you type a question or request into the terminal, and one of two things happens:
 
-The project is intentionally built with clean, modular Python so it can grow from a simple CLI tool into a full-stack learning platform (see [Future Improvements](#-future-improvements)).
+- If it's a normal question (like "explain recursion"), Gemini just answers it directly, like a tutor would.
+- If it sounds like something that needs a tool (like "what's the weather in Tokyo"), Gemini figures out *which* tool fits best, and then Python actually runs that tool and gives you the result.
 
-**Why this project?**
-- Demonstrates practical integration with a modern LLM API (Gemini)
-- Shows secure configuration/secrets management with `.env`
-- Emphasizes clean code structure and error handling
-- Serves as a foundation for a larger AI-powered application
+So Gemini isn't running the tools itself — it's more like the decision-maker. It looks at your message and says "this needs the weather tool" or "this needs the calculator." Then plain Python code takes over and does the actual work. If Gemini decides no tool is needed, it just answers you directly as a tutor.
 
----
+There's also a separate part of the project — the **roadmap agent** — that builds you a 90-day learning plan for any topic. You trigger it by typing `roadmap` followed by your goal (e.g. `roadmap learn web development`), and it runs through three steps: it figures out the skills you need (reasoning), puts them in the right learning order (planning), and then writes out the full 90-day roadmap (execution).
 
-## ✨ Features
+## How a request flows through the app
 
-1. 💬 **Interactive CLI Chatbot**  
-   Ask questions directly in your terminal and receive real-time AI responses.
-
-2. 🤖 **Gemini API Integration**  
-   Uses Google's `google-genai` SDK to communicate with Gemini models.
-
-3. 🔐 **Secure API Key Management**  
-   API keys are stored securely in a `.env` file and are never hardcoded or committed to the repository.
-
-4. 🧑‍🏫 **System Prompt Customization**  
-   Includes a tutor-style system prompt that guides the AI's tone and teaching approach.
-
-5. 🛡️ **Robust Error Handling**  
-   Implements `try/except` blocks to gracefully handle API and runtime errors.
-
-6. 🧩 **Modular Code Structure**  
-   Organized into reusable components, making the project easy to maintain and extend.
-
-7. 🧵 **Conversation Memory**
-   Maintain conversation context across multiple turns.
-   
-8. ⚡**Treaming responses**
-   Display AI responses in real life using streaming.
-   
----
-Example interaction:
-
+**Normal question:**
 ```
-$ python main.py
+You ask something → Gemini answers directly → You get a response
+```
 
-🎓 AI Learning Assistant — type 'exit' to quit
+**Something that needs a tool:**
+```
+You ask something → Gemini decides which tool fits → Python runs that tool → You get the result
+```
 
+**Roadmap request:**
+```
+You type "roadmap <your goal>" → Reasoning → Planning → Execution → Full 90-day roadmap
+```
+
+## What it can do right now
+
+- Chat with you like a tutor, and remember what you talked about earlier in the conversation
+- Tell you the current time
+- Do calculations
+- Check the weather for a city
+- Search the web (using Tavily)
+- Give you a motivational quote when you need one
+- Generate a secure random password
+- Build you a 90-day learning roadmap for any goal
+
+## The roadmap agent, a bit more detail
+
+Typing `roadmap <goal>` skips the normal tool-selection step and goes straight into its own three-step process:
+
+1. **Reasoning** – Gemini looks at your goal and figures out what skills are actually needed
+2. **Planning** – it arranges those skills into the best order to learn them
+3. **Execution** – it writes out the full 90-day roadmap based on that plan
+
+## A couple of quick examples
+
+**Asking about the weather:**
+```
+You: What's the weather in Tokyo?
+Gemini decides: Weather_Tools
+Python runs: get_weather()
+You get: current weather for Tokyo
+```
+
+**Asking for motivation:**
+```
+You: Give me motivation.
+Gemini decides: Motivational tools
+Python runs: Motivational_quotes()
+You get: a random motivational quote
+```
+
+**Just asking a normal question:**
+```
 You: What is a binary search tree?
-Tutor: Great question! Let's break it down step by step...
-1. A binary search tree (BST) is a data structure...
-2. Each node has at most two children...
-3. The left child is always smaller, the right child is always larger...
+Gemini decides: no_tool
+Gemini answers directly, step by step
 ```
 
----
+## Setting it up
 
-## ⚙️ Installation
+1. Clone the repo:
+```bash
+git clone https://github.com/your-username/Python_AI_learning_Assistant.git
+cd Python_AI_learning_Assistant
+```
 
-### Prerequisites
-- Python **3.9+**
-- A **Google Gemini API key** ([Get one here](https://ai.google.dev/))
-- `pip` package manager
+2. (Optional but recommended) make a virtual environment:
+```bash
+python -m venv venv
+source venv/bin/activate      # Windows: venv\Scripts\activate
+```
 
-### Steps
+3. Install what it needs:
+```bash
+pip install -r requirements.txt
+```
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/your-username/ai-learning-assistant.git
-   cd ai-learning-assistant
-   ```
-
-2. **Create a virtual environment** (recommended)
-   ```bash
-   python -m venv venv
-   source venv/bin/activate   # On Windows: venv\Scripts\activate
-   ```
-
-3. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
-
----
-
-## 🔑 Environment Variables
-
-This project uses a `.env` file to securely store your Gemini API key.
-
-1. Copy the example file:
-   ```bash
-   cp .env.example .env
-   ```
-
-2. Open `.env` and add your API key:
-   ```env
-   GEMINI_API_KEY=your_api_key_here
-   ```
-
-**`.env.example`**
+4. Create a `.env` file in the project folder and add your API keys:
 ```env
-# Google Gemini API Key
-# Get your key from: https://ai.google.dev/
-GEMINI_API_KEY=your_api_key_here
+Gemini_API_KEY=your_gemini_api_key
+Weather_API_key=your_weather_api_key
+tavily_search_api=your_tavily_api_key
 ```
 
-> ⚠️ Never commit your `.env` file. It is already included in `.gitignore`.
+**Important:** don't ever commit your `.env` file to GitHub. Keep your keys private — make sure `.env` is in your `.gitignore`.
 
----
-
-## 🚀 Usage
-
-Run the assistant from your terminal:
+## Running it
 
 ```bash
-python main.py
+python AI_tutor.py
 ```
 
-Then simply type your question and press **Enter**:
+Then just type whatever you want:
+- Ask a question and get tutored
+- Ask for the weather, a calculation, a password, or a motivational quote
+- Type `roadmap <your goal>` to get a full 90-day learning plan
 
-```
-You: Explain how recursion works
-Tutor: Sure! Let's go step by step...
-```
+Type `exit`, `quit`, `bye`, or similar to end the session.
 
-Type `exit` or `quit` to end the session.
+## Where this is headed
 
----
+This is still very much a work in progress. Things I'm planning to add or improve:
 
-## 📂 Project Structure
+- Using Gemini's actual function-calling feature instead of just asking it to name a tool in plain text
+- Having the AI pull out the details it needs for a tool automatically (like the city name for weather), instead of asking for input separately
+- Letting it chain multiple steps together instead of just picking one tool at a time
+- Saving conversations and roadmaps somewhere permanent (a database) instead of losing them when the app closes
+- A proper web interface, so it's not just a terminal app
+- A FastAPI backend so other apps could talk to it too
+- Actually deploying it somewhere so other people could use it
 
-```
-ai-learning-assistant/
-│
-├── main.py                # Entry point — runs the CLI chat loop
-├── tutor.py               # Core logic for Gemini API calls & response handling
-├── config.py               # Loads environment variables and app configuration
-├── requirements.txt        # Python dependencies
-├── .env.example             # Example environment variable file
-├── .gitignore
-└── README.md
-```
+## A note on how the "tool selection" works
 
-> Structure may vary slightly depending on your implementation — update this section to match your actual file layout.
+Right now, when I say Gemini "picks a tool," I mean I'm prompting it with the user's message and a list of tool names, and it just replies with the name of the one it thinks fits (or `no_tool` if none apply). Python then matches that name to a function and runs it. It's not using Gemini's official built-in function-calling system yet — that's one of the upgrades I want to make later.
 
----
+## About me
 
-## 🧠 How the Gemini API Is Used
-
-The application uses Google's **`google-genai`** SDK to communicate with the Gemini model. At a high level:
-
-1. **Configuration** — The API key is loaded securely from the `.env` file using `python-dotenv`.
-2. **Client Initialization** — A Gemini client is created using the loaded API key.
-3. **System Instruction** — A custom system prompt is passed to the model, instructing it to act as a **patient, step-by-step tutor** while still answering direct factual questions concisely.
-4. **User Input Loop** — The app continuously reads user input from the terminal.
-5. **Response Generation** — Each user message is sent to the Gemini model along with the system instruction, and the generated response is printed back to the terminal.
-6. **Error Handling** — API calls are wrapped in `try/except` blocks to catch and gracefully handle network issues, invalid keys, or unexpected API errors.
-
-Example (simplified) flow:
-
-```python
-from google import genai
-
-client = genai.Client(api_key=GEMINI_API_KEY)
-
-response = client.models.generate_content(
-    model="gemini-2.0-flash",
-    contents=user_input,
-    config={"system_instruction": TUTOR_SYSTEM_PROMPT}
-)
-
-print(response.text)
-```
-
----
-
-## 🛣️ Future Improvements
-
-Planned enhancements to expand this project's capabilities:
-
-- 💾 **Save Chat History** — Persist conversations to a local file or database
-- 🎭 **Multiple Tutor Modes** — e.g., beginner, exam-prep, socratic-style tutoring
-- 🌐 **Streamlit Web Interface** — A browser-based UI for non-technical users
-- 🔌 **FastAPI Backend** — Expose the tutor as a REST API for other apps to consume
--📝 **Markdown Response Rendering** — Render formatted code blocks, lists, and tables in output
-
----
-
-## 💡 What I Learned
-
-Building this project helped me strengthen several practical skills:
-
-- Integrating a third-party AI API (Gemini) into a real Python application
-- Managing secrets and configuration securely using environment variables
-- Designing effective system prompts to control AI behavior and tone
-- Structuring a small Python project in a modular, maintainable way
-- Implementing defensive programming with proper error handling
-- Thinking about a project's roadmap and designing code that can scale (CLI → web app → API)
-
----
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome!
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-Please make sure to update tests and documentation as appropriate.
-
----
-
-👤Author
-
-Muhammad Hamza Khan
-
----
-
-<p align="center"> Made with ❤️ and Python </p>
+Built by Muhammad Hamza Khan, as a way to learn how to actually build with LLMs instead of just using them.
