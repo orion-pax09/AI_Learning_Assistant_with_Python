@@ -8,8 +8,6 @@
 
 A command-line AI tutor built with Google's Gemini API. It started out as a simple chatbot that answers questions, but it's slowly turning into something smarter — an assistant that can pick the right tool for the job, not just chat.
 
-![Architecture](assets/architecture.svg)
-
 ## What this project actually does
 
 At its core, you type a question or request into the terminal, and one of two things happens:
