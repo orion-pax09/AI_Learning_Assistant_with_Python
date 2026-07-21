@@ -9,6 +9,7 @@ import random
 from tavily import TavilyClient
 load_dotenv()
 
+
 class AI_Agent_Roadmap:
     def __init__(self , goal):
         self.goal = goal
@@ -61,9 +62,6 @@ class AI_Agent_Roadmap:
         time.sleep(1)
 
         execute = self.executing(plan=plan)
-        print("\n" + "="*50 , end="")
-        print("Final roadmap")
-        print("\n" + "="*50 , end="")
         print(execute)
 
 
@@ -109,7 +107,7 @@ def ask_AI_Tutor(prompt:str) -> str:
         print("An error occured: ", e)
 
 
-def getDate_time():
+def getDate_time(query=None):
     now = datetime.now()
     return now.strftime("%I:%M:%S %P")
 
@@ -121,7 +119,7 @@ def calculator(expression):
         return "Invalid expression"
     
 
-def Motivational_quotes():
+def Motivational_quotes(query=None):
     quotes = [
     "Discipline beats motivation.",
     "No pain, no gain.",
@@ -160,7 +158,7 @@ def Motivational_quotes():
 ]
     return random.choice(quotes)
 
-def generate_password():
+def generate_password(query=None):
     symbol = "AB`CD~EFGHI!JK@LM#NO$PQ%RS^TU&VW*XY(Za)bc+d9-e8=f7g6h5i4j321klmnopqrstuvwxyz"
     try:
         length = int(input("Enter the length of input: "))
@@ -175,7 +173,7 @@ def generate_password():
         return "Invalid. Enter the length in digit"
             
 
-def get_weather():
+def get_weather(query=None):
     city = input("Enter the city: ")
     weather_data = requests.get(f"https://api.openweathermap.org/data/2.5/weather?q={city}&units=metric&APPID={Token_Weather}")
     try:
@@ -240,7 +238,87 @@ def get_query(query , Conservational_context):
         return get_web_searching(query)
     else:
         return ask_AI_Tutor(Conservational_context)
-                                
+
+def Generate_ROADMAP(topic):
+    return f""""
+    Roadmap for {topic}
+    1. Learn Fundamental
+    2. Practice Projects
+    3. Build portfolio
+    4. Apply for jobs
+    """""
+
+TOOlS = {
+    "time_tools" : getDate_time,
+    "Calculator_tools": calculator,
+    "Weather_Tools":get_weather,
+    "web_Search_tools":get_web_searching,
+    "Motivational tools":Motivational_quotes,
+    "Generate password tools":generate_password,
+    "Road map tools":Generate_ROADMAP
+}
+
+def select_tools(conversation_context):
+    prompt = f"""
+You are an intelligent tool-selection system.
+
+Your job is to decide whether the user's request requires
+a tool or can be answered directly by the AI.
+
+Available tools:
+- time_tools
+- Calculator_tools
+- Weather_Tools
+- web_Search_tools
+- Motivational tools
+- Generate password tools
+- Road map tools
+- no_tool
+
+Tool descriptions:
+- time_tools: Get the current time.
+- Calculator_tools: Perform numerical calculations.
+- Weather_Tools: Get weather information.
+- web_Search_tools: Search the internet for current or external information.
+- Motivational tools: Provide motivational quotes or motivation.
+- Generate password tools: Generate passwords.
+- Road map tools: Create learning roadmaps.
+- no_tool: Use this when the AI can answer the user's request directly
+  without using any external tool.
+
+Rules:
+1. Understand the user's intent.
+2. Use conversation context for follow-up requests.
+3. Select a tool only when that tool is actually required.
+4. Do NOT force a tool selection.
+5. If the user asks for explanations, concepts, derivations,
+   programming help, general knowledge, or tutoring,
+   use no_tool unless another tool is clearly required.
+6. If the request is a calculation, use Calculator_tools.
+7. If the request requires current or external information,
+   use web_Search_tools.
+8. Always return exactly one option.
+9. Return ONLY the exact tool name.
+10. Never return None.
+
+Conversation context:
+{conversation_context}
+"""
+
+    response = client.models.generate_content(
+        model="gemini-2.5-flash",
+        contents=prompt
+    )
+
+    return response.text.strip()
+
+
+def Execute_tools(tool_name,query):
+    if tool_name not in TOOlS:
+        return f"Tools not found: {tool_name}"
+    tools = TOOlS[tool_name]
+    return tools(query)    
+
 def main():
     history = []
     Max_history =20
@@ -250,6 +328,7 @@ def main():
     while True:
         try:
             prompt = input("Ask AI tutor: ")
+            # Roadmap agent 
             if prompt.lower().strip() in ["bye","goodbye","exit","quit","q","stop","end","close","leave","terminate","finish","done",
                           "see you","see ya","farewell","exit()","quit()"]:
                  print("Goodbye")
@@ -259,16 +338,35 @@ def main():
                     goal = prompt[8:].strip()
                     agent = AI_Agent_Roadmap(goal=goal)
                     agent.run()
+                    print("\n" + "="*50)
+                    print("Final roadmap")
+                    print("="*50 , end="")
                     
                     # after running roadmap agent, skip normal query handling
                     
                     continue
-                
+
+                #Save user Query
+
                 history.append(f"Users: {prompt}")
                 conversation_context = "\n".join(history)
                 start_time = time.time()
-                AI_response = get_query(prompt , conversation_context)
-                print(f"AI tutor: {AI_response}")
+
+                # Ask LLM which tools to use
+                tools_name = select_tools(conversation_context)
+
+                #if no such tools found then shift AI tutor to assisstant
+                if tools_name == "no_tool":
+                    AI_response = ask_AI_Tutor(conversation_context)
+                else:
+                    #otherwise shift AI tutor to become AI agent
+                    print(f"Tool selected: {tools_name}")
+                    AI_response = Execute_tools(tool_name=tools_name ,query=prompt)
+
+                print(AI_response)
+
+                print()
+
                 history.append(f"AI tutor: {AI_response}")
                 
                 if len(history)>Max_history:
