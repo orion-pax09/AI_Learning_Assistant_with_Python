@@ -107,19 +107,19 @@ def ask_AI_Tutor(prompt:str) -> str:
         print("An error occured: ", e)
 
 
-def getDate_time(query=None):
+def getDate_time():
     now = datetime.now()
     return now.strftime("%I:%M:%S %P")
 
 
-def calculator(expression):
+def calculator(expression:str):
     try:
         return eval(expression)
     except Exception as e:
         return "Invalid expression"
     
 
-def Motivational_quotes(query=None):
+def Motivational_quotes():
     quotes = [
     "Discipline beats motivation.",
     "No pain, no gain.",
@@ -158,10 +158,9 @@ def Motivational_quotes(query=None):
 ]
     return random.choice(quotes)
 
-def generate_password(query=None):
+def generate_password(length : int):
     symbol = "AB`CD~EFGHI!JK@LM#NO$PQ%RS^TU&VW*XY(Za)bc+d9-e8=f7g6h5i4j321klmnopqrstuvwxyz"
     try:
-        length = int(input("Enter the length of input: "))
         if length <=0:
             return "❌ length should not be less than or equal to zero"
         if length >=len(symbol):
@@ -173,8 +172,7 @@ def generate_password(query=None):
         return "Invalid. Enter the length in digit"
             
 
-def get_weather(query=None):
-    city = input("Enter the city: ")
+def get_weather(city:str):
     weather_data = requests.get(f"https://api.openweathermap.org/data/2.5/weather?q={city}&units=metric&APPID={Token_Weather}")
     try:
         if weather_data.status_code==200:
@@ -184,17 +182,17 @@ def get_weather(query=None):
             description = data["weather"][0]["description"]
             City = data["name"]
             return (
-                f"📍Location: {City}\n"
-                f"🌡️Temperature: {temperature:.1f}°C\n"
-                f"🥵Feel like Temperature: {feels_like:.1f}°C\n"
-                f"☁️Weather: {description}\n"
+                f"📍 Location: {City}\n"
+                f"🌡️ Temperature: {temperature:.1f}°C\n"
+                f"🥵 Feel like Temperature: {feels_like:.1f}°C\n"
+                f"☁️ Weather: {description}\n"
                 )
         else:
             return f"❌{city} does not exist. Please check the spelling"
     except Exception as e:
         return "❌ Unable to connect to the weather service. Please try again later."
 
-def get_web_searching(query):
+def get_web_searching(query:str):
     client = TavilyClient(Token_Tavily)
     response = client.search(query)
     result = ""
@@ -247,78 +245,192 @@ def Generate_ROADMAP(topic):
     3. Build portfolio
     4. Apply for jobs
     """""
+def get_skill(role:str):
+    """""
+    return the skills only required for role 
+    Parameter: role(str) - career role selected by user
+    Return: dict : Required skills 
+    
+    """
+    return {
+        "Role" : role,
+        "skills": [
+            "python" , "Machine learning" , "Data science" , "Deep learning" , "LLMS"
+        ]
+    }
 
-TOOlS = {
-    "time_tools" : getDate_time,
-    "Calculator_tools": calculator,
-    "Weather_Tools":get_weather,
-    "web_Search_tools":get_web_searching,
-    "Motivational tools":Motivational_quotes,
-    "Generate password tools":generate_password,
-    "Road map tools":Generate_ROADMAP
-}
+def get_certificate(role:str):
+    """""
+    Returns certification info 
+    Parameters: role(str): Career role 
+    Returns:Dict
+    """
 
-def select_tools(conversation_context):
-    prompt = f"""
-You are an intelligent tool-selection system.
+    return {
+            "role": role ,
+            "certificates": [
+                "Google Professional Machine Learning Engineer",
+                "AWS Machine Learning Specialty"
+                ]
+            }
 
-Your job is to decide whether the user's request requires
-a tool or can be answered directly by the AI.
+def get_salary(role:str):
+    """""
+    Returns expected salary range
+    Parameters: role(str)
+    Returns:Dict
+    """
 
-Available tools:
-- time_tools
-- Calculator_tools
-- Weather_Tools
-- web_Search_tools
-- Motivational tools
-- Generate password tools
-- Road map tools
-- no_tool
+    return {
+        "role": role,
+        "salary": "$80,000 - $150,000 per year"
+    }
+#Register function 
+TOOLS = [get_certificate , 
+        get_skill , 
+        get_salary ,
+        get_weather , 
+        getDate_time , 
+        generate_password , 
+        get_web_searching , 
+        calculator,
+        Motivational_quotes
+        ]
+def run_agent(history):
 
-Tool descriptions:
-- time_tools: Get the current time.
-- Calculator_tools: Perform numerical calculations.
-- Weather_Tools: Get weather information.
-- web_Search_tools: Search the internet for current or external information.
-- Motivational tools: Provide motivational quotes or motivation.
-- Generate password tools: Generate passwords.
-- Road map tools: Create learning roadmaps.
-- no_tool: Use this when the AI can answer the user's request directly
-  without using any external tool.
+    while True:
 
-Rules:
-1. Understand the user's intent.
-2. Use conversation context for follow-up requests.
-3. Select a tool only when that tool is actually required.
-4. Do NOT force a tool selection.
-5. If the user asks for explanations, concepts, derivations,
-   programming help, general knowledge, or tutoring,
-   use no_tool unless another tool is clearly required.
-6. If the request is a calculation, use Calculator_tools.
-7. If the request requires current or external information,
-   use web_Search_tools.
-8. Always return exactly one option.
-9. Return ONLY the exact tool name.
-10. Never return None.
+        max_retry = 10
+        for attempt in range(max_retry):
+            try:
+                # ---------------------------------
+                # 1. Ask Gemini
+                # ---------------------------------
+                    response = client.models.generate_content(
+                    model="gemini-2.5-flash",
+                    contents=history,
+                    config=types.GenerateContentConfig(
+                        system_instruction=system_instruction,
+                        tools=TOOLS
+                        )
+                    )
+                    break
+            except Exception as e:
 
-Conversation context:
-{conversation_context}
-"""
+                error_message = str(e)
 
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=prompt
-    )
+                if "503" in error_message or "UNAVAILABLE" in error_message:
+                    if attempt < max_retry -1:
+                        wait_time = attempt ** attempt
 
-    return response.text.strip()
+                        print("Gemini is unavailable")
+                        print(f"Retrying in {wait_time}")
 
+                        time.sleep(wait_time)
+                    else:
+                        
+                        return (
+                            "Sorry, Gemini is currently "
+                            "experiencing high demand. "
+                            "Please try again in a moment."
+                        )
+                elif "429" in error_message or "RESOURCE_EXHAUSTED" in error_message:
+                    if attempt < max_retry-1:
+                        wait_time = attempt*(2**attempt)
+                        print(
+                            "\nYou have sent too many requests."
+                        )
 
-def Execute_tools(tool_name,query):
-    if tool_name not in TOOlS:
-        return f"Tools not found: {tool_name}"
-    tools = TOOlS[tool_name]
-    return tools(query)    
+                        print(
+                            f"Rate limit reached. "
+                            f"Retrying in {wait_time} seconds..."
+                        )
 
+                        time.sleep(wait_time)
+                    else:
+
+                        return (
+                            "Sorry, you have reached the API "
+                            "rate limit. Please wait a little "
+                            "before trying again."
+                        )
+
+                
+                else:
+                    return f"Gemini API error: {e}"
+
+                
+
+        # ---------------------------------
+        # 2. Check if Gemini wants a tool
+        # ---------------------------------
+
+        function_calls = response.function_calls
+
+        if not function_calls:
+            return response.text
+
+        # ---------------------------------
+        # 3. Save Gemini's response
+        # ---------------------------------
+
+        history.append(
+            response.candidates[0].content
+        )
+
+        # ---------------------------------
+        # 4. Execute function calls
+        # ---------------------------------
+
+        function_history = []
+
+        for call in function_calls:
+
+            print(
+                f"Calling function: {call.name}"
+            )
+
+            function = globals().get(
+                call.name
+            )
+
+            if function is None:
+
+                result = (
+                    f"Function {call.name} "
+                    f"not found"
+                )
+
+            else:
+
+                result = function(
+                    **call.args
+                )
+
+            # ---------------------------------
+            # 5. Create function response
+            # ---------------------------------
+
+            function_history.append(
+                types.Part.from_function_response(
+                    name=call.name,
+                    response={
+                        "results": result
+                    }
+                )
+            )
+
+        # ---------------------------------
+        # 6. Send function results to Gemini
+        # ---------------------------------
+
+        history.append(
+            types.Content(
+                role="tool",
+                parts=function_history
+            )
+        )
+        
 def main():
     history = []
     Max_history =20
@@ -333,11 +445,18 @@ def main():
                           "see you","see ya","farewell","exit()","quit()"]:
                  print("Goodbye")
                  break
+            
             else:
                 if prompt.lower().startswith("roadmap"):
-                    goal = prompt[8:].strip()
+                    goal = prompt[7:].strip()
+
+                    if not goal:
+                        print("Please provide goal")
+                        continue
+
                     agent = AI_Agent_Roadmap(goal=goal)
                     agent.run()
+
                     print("\n" + "="*50)
                     print("Final roadmap")
                     print("="*50 , end="")
@@ -347,31 +466,18 @@ def main():
                     continue
 
                 #Save user Query
+            
+                history.append(types.Content(role="user",
+                                             parts= [types.Part.from_text(text=prompt)]))
+                if len(history) > Max_history:
+                    history = history[-Max_history:]
 
-                history.append(f"Users: {prompt}")
-                conversation_context = "\n".join(history)
                 start_time = time.time()
 
-                # Ask LLM which tools to use
-                tools_name = select_tools(conversation_context)
-
-                #if no such tools found then shift AI tutor to assisstant
-                if tools_name == "no_tool":
-                    AI_response = ask_AI_Tutor(conversation_context)
-                else:
-                    #otherwise shift AI tutor to become AI agent
-                    print(f"Tool selected: {tools_name}")
-                    AI_response = Execute_tools(tool_name=tools_name ,query=prompt)
-
+                AI_response = run_agent(history=history)
+                print(f"\nAI tutor: ")
                 print(AI_response)
-
-                print()
-
-                history.append(f"AI tutor: {AI_response}")
-                
-                if len(history)>Max_history:
-                    history = history[-Max_history:]
-                
+            
                 end_time = time.time() 
                 total_time=round(end_time - start_time, 2)
                 print(f"\nResponse time taken: {total_time} seconds")
